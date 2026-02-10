@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -52,12 +52,12 @@ body{overflow:hidden;transition:background 1s;}
 /* SHAKE */
 .shake{animation:shake .4s infinite;}
 @keyframes shake{0%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}100%{transform:rotate(-1deg)}}
-.fall{top:600px!important;}
+.fall{top:600px!important;transition:top 2s linear;}
 
 /* PUPPY */
 #puppy{
   position:absolute; font-size:50px; z-index:3; text-align:center;
-  transition:transform 0.2s;
+  transition:transform 0.2s, top 2s linear;
   text-shadow: 2px 2px 2px rgba(0,0,0,0.3);
 }
 
@@ -118,7 +118,6 @@ body{overflow:hidden;transition:background 1s;}
 <script>
 // ================= GAME DATA =================
 const levels = [
-  /* LEVEL 1 - Sky */
   [
    {q:"The ratio of Ben’s stamps to Tim’s stamps is 2 : 3. They have 150 stamps altogether. How many stamps does Ben have?", a:60, o:[50,60,75,90]},
    {q:"The ratio of red balls to blue balls is 3 : 5. There are 40 more blue balls than red balls. How many balls are there altogether?", a:160, o:[120,160,200,240]},
@@ -126,7 +125,6 @@ const levels = [
    {q:"The ratio of boys to girls is 5 : 4. There are 9 more boys than girls. How many pupils are there altogether?", a:81, o:[72,81,90,99]},
    {q:"The ratio of sugar to flour is 3 : 8. If there are 250 g more flour than sugar, how much flour is there?", a:400, o:[300,350,400,450]}
   ],
-  /* LEVEL 2 - Underwater */
   [
    {q:"Sarah spent 3/8 of her money and had $50 left. How much money did she have at first?", a:80, o:[60,80,100,120]},
    {q:"Ali gave away 1/4 of his sweets and had 45 sweets left. How many sweets did he have at first?", a:60, o:[45,60,75,90]},
@@ -134,34 +132,17 @@ const levels = [
    {q:"Mandy spent 5/6 of her savings and had $40 left. How much did she have at first?", a:240, o:[240,200,280,720]},
    {q:"After giving away 3/7 of his books, Tom had 28 books left. How many books did he have at first?", a:49, o:[42,49,56,63]}
   ],
-  /* LEVEL 3 - Underground */
   [
    {q:"The number of apples is 4 times the number of pears. There are 90 more apples than pears. How many pears are there?", a:30, o:[20,30,40,45]},
    {q:"A is 3 times B. If A is 48 more than B, find B.", a:24, o:[16,24,32,40]},
    {q:"The number of red marbles is 5 times the number of blue marbles. There are 64 more red marbles than blue marbles. How many blue marbles are there?", a:16, o:[12,16,20,24]},
    {q:"The number of pencils is 6 times the number of pens. There are 35 more pencils than pens. How many pens are there?", a:7, o:[5,7,10,14]},
    {q:"The mass of a bag of rice is 4 times that of a bag of flour. The rice is 18 kg heavier. What is the mass of the flour?", a:6, o:[4,6,9,12]}
-  ],
-  /* LEVEL 4 - Candy Land */
-  [
-   {q:"John gave away 1/3 of his marbles and then gave away 20 more. He had 40 marbles left. How many marbles did he have at first?", a:90, o:[60,90,120,150]},
-   {q:"A shop sold 1/5 of its pens in the morning and 30 pens in the afternoon. 70 pens were left. How many pens were there at first?", a:125, o:[100,125,150,175]},
-   {q:"A boy spent 1/4 of his money on a book and $18 on a pen. He then had $30 left. How much money did he have at first?", a:64, o:[56,64,72,80]},
-   {q:"Mary gave away 2/7 of her stickers and then 15 more. She had 30 stickers left. How many stickers did she have at first?", a:63, o:[49,56,63,70]},
-   {q:"A farmer sold 1/3 of his eggs and then 24 more eggs. He had 36 eggs left. How many eggs did he have at first?", a:90, o:[72,90,108,120]}
-  ],
-  /* LEVEL 5 - Space */
-  [
-   {q:"The ratio of Tom’s money to Jim’s money is 4 : 7. After Tom gives Jim $30, they have equal amounts. How much money did Tom have at first?", a:120, o:[90,120,150,180]},
-   {q:"The ratio of Alan’s age to Ben’s age is 3 : 5. After 6 years, the ratio becomes 4 : 5. What is Alan’s age now?", a:18, o:[15,18,21,24]},
-   {q:"The ratio of girls to boys is 2 : 3. After 6 girls leave and 9 boys join, the ratio becomes 1 : 2. How many pupils were there at first?", a:60, o:[48,60,72,90]},
-   {q:"The ratio of red to blue beads is 5 : 3. After 16 red beads are added, the ratio becomes 7 : 3. How many blue beads are there?", a:24, o:[18,24,30,36]},
-   {q:"The ratio of Peter’s money to Sam’s money is 5 : 8. After Peter spends $45, Sam has twice as much money as Peter. How much money did Sam have at first?", a:360, o:[120,360,200,240]}
   ]
 ];
 
 let levelIndex=0, questionIndex=0, score=0, water=5, seconds=0, lives=2;
-const levelColors=["#87ceeb","#1e90ff","#8b4513","#ffc0cb","#4b3b8f"];
+const levelColors=["#87ceeb","#1e90ff","#8b4513","#ffc0cb","#0b0b45"];
 
 const puppy=document.getElementById("puppy");
 const waterEl=document.getElementById("water");
@@ -179,7 +160,7 @@ const winDiv=document.getElementById("win");
 let platforms=[];
 const baseY=400;
 const gap=70;
-let timerInterval, waterInterval;
+let timerInterval, waterInterval, platformDropTimeout;
 
 // ===== PLATFORM CREATION
 function createPlatforms(num){
@@ -259,6 +240,7 @@ function check(n){
     splash.style.display="flex";
     clearInterval(timerInterval);
     clearInterval(waterInterval);
+    clearTimeout(platformDropTimeout);
     return;
   }
 
@@ -266,7 +248,42 @@ function check(n){
   load();
 }
 
+// ===== PLATFORM SHAKE & DROP =====
+function schedulePlatformDrop() {
+  clearTimeout(platformDropTimeout);
+
+  platformDropTimeout = setTimeout(() => {
+    platforms.forEach(p => p.classList.add("shake"));
+
+    setTimeout(() => {
+      platforms.forEach(p => {
+        p.classList.remove("shake");
+        p.classList.add("fall");
+      });
+
+      puppy.style.top = "500px";
+
+      setTimeout(() => {
+        splashText.textContent = `Level ${levelIndex+1} Failed!`;
+        nextBtn.textContent = "Retry";
+        splash.style.display = "flex";
+        clearInterval(timerInterval);
+        clearInterval(waterInterval);
+      }, 2000);
+
+    }, 2000);
+
+  }, 180000); // 3 minutes
+}
+
 // ===== START LEVEL
+const originalStartLevel = startLevel;
+startLevel = function() {
+  clearTimeout(platformDropTimeout);
+  originalStartLevel();
+  schedulePlatformDrop();
+};
+
 function startLevel(){
   splash.style.display="none";
   document.body.style.background=levelColors[levelIndex];
