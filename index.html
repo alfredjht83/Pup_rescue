@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Puppy Rescue – 3D Adventure</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
+body{overflow:hidden;transition:background 1s;}
+
+/* HUD */
+#hud{display:flex;justify-content:space-around;font-weight:bold;font-size:18px;margin-bottom:5px;}
+#lives{color:red;font-weight:bold;}
+
+/* GAME AREA */
+#gameArea{
+  position:relative;height:520px;width:100%;overflow:hidden;
+  perspective:800px;
+}
+
+/* WATER */
+#water{
+  position:absolute;bottom:0;width:100%;height:5%;
+  background:linear-gradient(rgba(2,136,209,0.8), rgba(1,87,155,0.8));
+  transition:height 1s linear;
+  z-index:1;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+}
+#water::before{
+  content:""; position:absolute; width:200%; height:50%; left:-50%; top:0;
+  background:radial-gradient(rgba(255,255,255,0.3) 15%, transparent 70%);
+  background-size:50px 50px; animation:wave 4s linear infinite;
+}
+@keyframes wave{0%{background-position:0 0;}100%{background-position:50px 0;}}
+
+/* PLATFORM 3D */
+.platform{
+  position:absolute;width:160px;height:20px;
+  border-radius:12px;
+  background:linear-gradient(#8bc34a,#558b2f);
+  box-shadow:0 8px 0 #33691e,inset 0 3px rgba(255,255,255,.4);
+  transform-style: preserve-3d;
+  transition:top 0.8s ease, left 0.8s ease;
+  z-index:2;
+}
+.platform::after{
+  content:""; position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.1); border-radius:12px;
+}
+
+/* SHAKE */
+.shake{animation:shake .4s infinite;}
+@keyframes shake{0%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}100%{transform:rotate(-1deg)}}
+.fall{top:600px!important;}
+
+/* PUPPY */
+#puppy{
+  position:absolute; font-size:50px; z-index:3; text-align:center;
+  transition:transform 0.2s;
+  text-shadow: 2px 2px 2px rgba(0,0,0,0.3);
+}
+
+/* QUESTIONS */
+#problem{text-align:center;font-size:17px;margin:8px;min-height:60px;padding:0 12px;}
+#tiles{display:flex;justify-content:center;flex-wrap:wrap;}
+.tile{
+  width:95px;margin:6px;padding:10px;
+  background:linear-gradient(#fff176,#fbc02d);
+  border-radius:12px;
+  box-shadow:0 6px #f57f17;
+  font-weight:bold; cursor:pointer;
+  text-align:center;
+  transition:transform 0.1s, box-shadow 0.1s;
+}
+.tile:hover{transform:translateY(-3px); box-shadow:0 10px #f57f17;}
+.tile:active{transform:translateY(4px); box-shadow:none;}
+
+/* SPLASH / WIN SCREEN */
+#splash, #win{
+  position:absolute; inset:0; background:rgba(0,0,0,0.7);
+  display:none; align-items:center; justify-content:center; flex-direction:column;
+  color:white; font-size:30px; z-index:10;
+}
+#splash button, #win button{
+  margin-top:20px;padding:10px 20px;font-size:18px;
+  border:none;border-radius:10px;cursor:pointer;background:#ff9800;color:white;
+}
+</style>
+</head>
+<body>
+
+<h1>🐶 Puppy Rescue – 3D Adventure</h1>
+
+<div id="hud">
+  <div>Level: <span id="level">1</span></div>
+  <div>Score: <span id="score">0</span></div>
+  <div>Lives: <span id="lives">2</span></div>
+  <div>Time: <span id="time">0:00</span></div>
+</div>
+
+<div id="problem"></div>
+<div id="gameArea">
+  <div id="water"></div>
+  <div id="puppy">🐶</div>
+</div>
+<div id="tiles"></div>
+
+<div id="splash">
+  <div id="splash-text"></div>
+  <button id="next-level">Next Level</button>
+</div>
+
+<div id="win">
+  <div>🎉 Puppy rescued through all levels!</div>
+</div>
+
+<script>
+// ================= GAME DATA =================
+const levels = [
+  /* LEVEL 1 - Sky */
+  [
+   {q:"The ratio of Ben’s stamps to Tim’s stamps is 2 : 3. They have 150 stamps altogether. How many stamps does Ben have?", a:60, o:[50,60,75,90]},
+   {q:"The ratio of red balls to blue balls is 3 : 5. There are 40 more blue balls than red balls. How many balls are there altogether?", a:160, o:[120,160,200,240]},
+   {q:"The ratio of apples to oranges is 4 : 7. There are 77 fruits altogether. How many apples are there?", a:28, o:[21,28,35,44]},
+   {q:"The ratio of boys to girls is 5 : 4. There are 9 more boys than girls. How many pupils are there altogether?", a:81, o:[72,81,90,99]},
+   {q:"The ratio of sugar to flour is 3 : 8. If there are 250 g more flour than sugar, how much flour is there?", a:400, o:[300,350,400,450]}
+  ],
+  /* LEVEL 2 - Underwater */
+  [
+   {q:"Sarah spent 3/8 of her money and had $50 left. How much money did she have at first?", a:80, o:[60,80,100,120]},
+   {q:"Ali gave away 1/4 of his sweets and had 45 sweets left. How many sweets did he have at first?", a:60, o:[45,60,75,90]},
+   {q:"After using 2/5 of a rope, the remaining length was 18 m. What was the original length of the rope?", a:30, o:[24,30,36,45]},
+   {q:"Mandy spent 5/6 of her savings and had $40 left. How much did she have at first?", a:48, o:[40,48,60,72]},
+   {q:"After giving away 3/7 of his books, Tom had 28 books left. How many books did he have at first?", a:49, o:[42,49,56,63]}
+  ],
+  /* LEVEL 3 - Underground */
+  [
+   {q:"The number of apples is 4 times the number of pears. There are 90 more apples than pears. How many pears are there?", a:30, o:[20,30,40,45]},
+   {q:"A is 3 times B. If A is 48 more than B, find B.", a:24, o:[16,24,32,40]},
+   {q:"The number of red marbles is 5 times the number of blue marbles. There are 64 more red marbles than blue marbles. How many blue marbles are there?", a:16, o:[12,16,20,24]},
+   {q:"The number of pencils is 6 times the number of pens. There are 35 more pencils than pens. How many pens are there?", a:7, o:[5,7,10,14]},
+   {q:"The mass of a bag of rice is 4 times that of a bag of flour. The rice is 18 kg heavier. What is the mass of the flour?", a:6, o:[4,6,9,12]}
+  ],
+  /* LEVEL 4 - Candy Land */
+  [
+   {q:"John gave away 1/3 of his marbles and then gave away 20 more. He had 40 marbles left. How many marbles did he have at first?", a:90, o:[60,90,120,150]},
+   {q:"A shop sold 1/5 of its pens in the morning and 30 pens in the afternoon. 70 pens were left. How many pens were there at first?", a:125, o:[100,125,150,175]},
+   {q:"A boy spent 1/4 of his money on a book and $18 on a pen. He then had $30 left. How much money did he have at first?", a:64, o:[56,64,72,80]},
+   {q:"Mary gave away 2/7 of her stickers and then 15 more. She had 30 stickers left. How many stickers did she have at first?", a:63, o:[49,56,63,70]},
+   {q:"A farmer sold 1/3 of his eggs and then 24 more eggs. He had 36 eggs left. How many eggs did he have at first?", a:90, o:[72,90,108,120]}
+  ],
+  /* LEVEL 5 - Space */
+  [
+   {q:"The ratio of Tom’s money to Jim’s money is 4 : 7. After Tom gives Jim $30, they have equal amounts. How much money did Tom have at first?", a:120, o:[90,120,150,180]},
+   {q:"The ratio of Alan’s age to Ben’s age is 3 : 5. After 6 years, the ratio becomes 4 : 5. What is Alan’s age now?", a:18, o:[15,18,21,24]},
+   {q:"The ratio of girls to boys is 2 : 3. After 6 girls leave and 9 boys join, the ratio becomes 1 : 2. How many pupils were there at first?", a:60, o:[48,60,72,90]},
+   {q:"The ratio of red to blue beads is 5 : 3. After 16 red beads are added, the ratio becomes 7 : 3. How many blue beads are there?", a:24, o:[18,24,30,36]},
+   {q:"The ratio of Peter’s money to Sam’s money is 5 : 8. After Peter spends $45, Sam has twice as much money as Peter. How much money did Sam have at first?", a:160, o:[120,160,200,240]}
+  ]
+];
+
+let levelIndex=0, questionIndex=0, score=0, water=5, seconds=0, lives=2;
+const levelColors=["#87ceeb","#1e90ff","#8b4513","#ffc0cb","#0b0b45"];
+
+const puppy=document.getElementById("puppy");
+const waterEl=document.getElementById("water");
+const gameArea=document.getElementById("gameArea");
+const problem=document.getElementById("problem");
+const tiles=document.getElementById("tiles");
+const scoreEl=document.getElementById("score");
+const levelEl=document.getElementById("level");
+const livesEl=document.getElementById("lives");
+const splash=document.getElementById("splash");
+const splashText=document.getElementById("splash-text");
+const nextBtn=document.getElementById("next-level");
+const winDiv=document.getElementById("win");
+
+let platforms=[];
+const baseY=400;
+const gap=70;
+let timerInterval, waterInterval;
+
+// ===== PLATFORM CREATION
+function createPlatforms(num){
+  platforms=[];
+  document.querySelectorAll(".platform").forEach(p=>p.remove());
+  for(let i=0;i<num;i++){
+    const p=document.createElement("div");
+    p.className="platform";
+    let centerX = gameArea.offsetWidth/2;
+    let offset = (i%2===0 ? -120 : 120);
+    p.style.left = centerX + offset - 80 + "px";
+    p.style.top = baseY - i*gap + "px";
+    gameArea.appendChild(p);
+    platforms.push(p);
+  }
+}
+
+// ===== PUPPY POSITION
+function placePuppy(i){
+  const plat=platforms[i];
+  puppy.style.left = (plat.offsetLeft + plat.offsetWidth/2 - 25) + "px";
+  puppy.style.top = (plat.offsetTop - 50) + "px";
+}
+
+// ===== JUMP ANIMATION
+function jumpTo(i){
+  const startX=parseFloat(puppy.style.left);
+  const startY=parseFloat(puppy.style.top);
+  const endX = platforms[i].offsetLeft + platforms[i].offsetWidth/2 - 25;
+  const endY = platforms[i].offsetTop - 50;
+  let t=0;
+  function animate(){
+    t+=0.05;
+    puppy.style.left = startX + (endX-startX)*t + "px";
+    puppy.style.top = startY + (endY-startY)*t - Math.sin(t*Math.PI)*50 + "px";
+    puppy.style.transform = `scale(${1 + 0.2*Math.sin(t*Math.PI)})`;
+    if(t<1) requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ===== LOAD QUESTION
+function load(){
+  const q=levels[levelIndex][questionIndex];
+  problem.textContent=q.q;
+  tiles.innerHTML="";
+  q.o.sort(()=>Math.random()-0.5).forEach(n=>{
+    const b=document.createElement("div");
+    b.className="tile";
+    b.textContent=n;
+    b.onclick=()=>check(n);
+    tiles.appendChild(b);
+  });
+}
+
+// ===== CHECK ANSWER
+function check(n){
+  const q=levels[levelIndex][questionIndex];
+  if(n===q.a){
+    score+=10; scoreEl.textContent=score;
+  } else {
+    lives--;
+    livesEl.textContent=lives;
+    water += 3; water=Math.min(water,100); waterEl.style.height=water+"%";
+  }
+
+  questionIndex++;
+
+  if(questionIndex>=levels[levelIndex].length || lives===0){
+    if(lives===0){
+      splashText.textContent = `Level ${levelIndex+1} Failed!`;
+      nextBtn.textContent = "Retry";
+    } else {
+      splashText.textContent = `Level ${levelIndex+1} Complete!`;
+      nextBtn.textContent = "Next Level";
+    }
+    splash.style.display="flex";
+    clearInterval(timerInterval);
+    clearInterval(waterInterval);
+    return;
+  }
+
+  jumpTo(questionIndex);
+  load();
+}
+
+// ===== START LEVEL
+function startLevel(){
+  splash.style.display="none";
+  document.body.style.background=levelColors[levelIndex];
+  water=5; waterEl.style.height=water+"%";
+  seconds=0; questionIndex=0; lives=2; livesEl.textContent=lives;
+  createPlatforms(levels[levelIndex].length);
+  placePuppy(0);
+  load();
+  timerInterval=setInterval(updateTime,1000);
+  waterInterval=setInterval(updateWater,5000);
+}
+
+// ===== TIME / WATER
+function updateTime(){ seconds++; document.getElementById("time").textContent=Math.floor(seconds/60)+":"+String(seconds%60).padStart(2,"0"); }
+function updateWater(){ water+=0.5; water=Math.min(water,100); waterEl.style.height=water+"%"; }
+
+// ===== NEXT LEVEL / RETRY
+nextBtn.onclick = ()=>{
+  splash.style.display="none";
+  if(nextBtn.textContent==="Retry"){
+    startLevel();
+  } else {
+    levelIndex++;
+    if(levelIndex>=levels.length){ winDiv.style.display="flex"; return; }
+    levelEl.textContent = levelIndex+1;
+    startLevel();
+  }
+}
+
+// ===== INIT
+levelEl.textContent=levelIndex+1;
+startLevel();
+</script>
+
+</body>
+</html>
