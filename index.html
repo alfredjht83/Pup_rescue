@@ -117,48 +117,55 @@ body{overflow:hidden;transition:background 1s;}
 
 <script>
 // ================= GAME DATA =================
-const levels = [
-  // LEVEL 1
+const englishPaper1 = [
+
+  // LEVEL 1 – Grammar (Basic Tenses & Prepositions)
   [
-   {q:"The ratio of Ben’s stamps to Tim’s stamps is 2 : 3. They have 150 stamps altogether. How many stamps does Ben have?", a:60, o:[50,60,75,90]},
-   {q:"The ratio of red balls to blue balls is 3 : 5. There are 40 more blue balls than red balls. How many balls are there altogether?", a:160, o:[120,160,200,240]},
-   {q:"The ratio of apples to oranges is 4 : 7. There are 77 fruits altogether. How many apples are there?", a:28, o:[21,28,35,44]},
-   {q:"The ratio of boys to girls is 5 : 4. There are 9 more boys than girls. How many pupils are there altogether?", a:81, o:[72,81,90,99]},
-   {q:"The ratio of sugar to flour is 3 : 8. If there are 250 g more flour than sugar, how much flour is there?", a:400, o:[300,350,400,450]}
+   {q:"She ______ to school before it started raining.", a:"walked", o:["walks","walked","walking","has walk"]},
+   {q:"The boys hid ______ the table when they heard the loud noise.", a:"under", o:["on","under","above","between"]},
+   {q:"Neither of the girls ______ willing to admit the mistake.", a:"was", o:["were","was","are","be"]},
+   {q:"The teacher reminded us ______ our homework.", a:"to complete", o:["complete","to complete","completing","completed"]},
+   {q:"There are ______ apples left in the basket.", a:"a few", o:["few","a few","little","much"]}
   ],
-  // LEVEL 2
+
+  // LEVEL 2 – Vocabulary (Contextual Meaning)
   [
-   {q:"Sarah spent 3/8 of her money and had $50 left. How much money did she have at first?", a:80, o:[60,80,100,120]},
-   {q:"Ali gave away 1/4 of his sweets and had 45 sweets left. How many sweets did he have at first?", a:60, o:[45,60,75,90]},
-   {q:"After using 2/5 of a rope, the remaining length was 18 m. What was the original length of the rope?", a:30, o:[24,30,36,45]},
-   {q:"Mandy spent 5/6 of her savings and had $40 left. How much did she have at first?", a:240, o:[240,200,280,720]},
-   {q:"After giving away 3/7 of his books, Tom had 28 books left. How many books did he have at first?", a:49, o:[42,49,56,63]}
+   {q:"The audience was ______ by the magician’s performance.", a:"amazed", o:["bored","amazed","tired","annoyed"]},
+   {q:"Tim spoke so ______ that nobody could hear him clearly.", a:"softly", o:["loudly","softly","quickly","brightly"]},
+   {q:"The principal gave a ______ speech during assembly.", a:"motivational", o:["careless","motivational","broken","angry"]},
+   {q:"She looked at the broken vase with a ______ expression.", a:"guilty", o:["proud","guilty","cheerful","excited"]},
+   {q:"The firefighter acted ______ to rescue the trapped child.", a:"bravely", o:["lazily","bravely","rudely","quietly"]}
   ],
-  // LEVEL 3
+
+  // LEVEL 3 – Editing for Spelling & Grammar
   [
-   {q:"The number of apples is 4 times the number of pears. There are 90 more apples than pears. How many pears are there?", a:30, o:[20,30,40,45]},
-   {q:"A is 3 times B. If A is 48 more than B, find B.", a:24, o:[16,24,32,40]},
-   {q:"The number of red marbles is 5 times the number of blue marbles. There are 64 more red marbles than blue marbles. How many blue marbles are there?", a:16, o:[12,16,20,24]},
-   {q:"The number of pencils is 6 times the number of pens. There are 35 more pencils than pens. How many pens are there?", a:7, o:[5,7,10,14]},
-   {q:"The mass of a bag of rice is 4 times that of a bag of flour. The rice is 18 kg heavier. What is the mass of the flour?", a:6, o:[4,6,9,12]}
+   {q:"Everyone in the class were excited about the trip.", a:"was", o:["were","is","was","be"]},
+   {q:"She has went to the library to return her books.", a:"gone", o:["went","go","gone","going"]},
+   {q:"The puppies is playing in the garden.", a:"are", o:["is","was","are","be"]},
+   {q:"I prefer reading than watching television.", a:"to", o:["than","to","over","with"]},
+   {q:"He did not knew the answer to the question.", a:"know", o:["knew","know","knows","known"]}
   ],
-  // LEVEL 4
+
+  // LEVEL 4 – Sentence Synthesis / Transformation
   [
-   {q:"John gave away 1/3 of his marbles and then gave away 20 more. He had 40 marbles left. How many marbles did he have at first?", a:90, o:[60,90,120,150]},
-   {q:"A shop sold 1/5 of its pens in the morning and 30 pens in the afternoon. 70 pens were left. How many pens were there at first?", a:125, o:[100,125,150,175]},
-   {q:"A boy spent 1/4 of his money on a book and $18 on a pen. He then had $30 left. How much money did he have at first?", a:64, o:[56,64,72,80]},
-   {q:"Mary gave away 2/7 of her stickers and then 15 more. She had 30 stickers left. How many stickers did she have at first?", a:63, o:[49,56,63,70]},
-   {q:"A farmer sold 1/3 of his eggs and then 24 more eggs. He had 36 eggs left. How many eggs did he have at first?", a:90, o:[72,90,108,120]}
+   {q:"Although it was raining, they continued playing. (Choose correct meaning)", a:"They continued playing despite the rain.", o:["They stopped because of rain.","They continued playing despite the rain.","They waited for rain to stop.","They disliked the rain."]},
+   {q:"The cake was so delicious that everyone asked for more. (Closest meaning)", a:"Everyone wanted another slice.", o:["Nobody liked the cake.","Everyone wanted another slice.","The cake was expensive.","The cake was small."]},
+   {q:"She was too tired to finish her homework. (Meaning)", a:"She could not finish her homework.", o:["She finished quickly.","She enjoyed homework.","She could not finish her homework.","She started early."]},
+   {q:"If you study hard, you will succeed. (Meaning)", a:"Studying hard leads to success.", o:["Success is impossible.","Studying hard leads to success.","Study is unnecessary.","Success comes easily."]},
+   {q:"He apologised for breaking the window. (Meaning)", a:"He said sorry for breaking it.", o:["He blamed someone else.","He fixed the window.","He said sorry for breaking it.","He ignored the problem."]}
   ],
-  // LEVEL 5
+
+  // LEVEL 5 – Situational Writing Skills (Tone & Purpose)
   [
-   {q:"The ratio of Tom’s money to Jim’s money is 4 : 7. After Tom gives Jim $30, they have equal amounts. How much money did Tom have at first?", a:120, o:[90,120,150,180]},
-   {q:"The ratio of Alan’s age to Ben’s age is 3 : 5. After 6 years, the ratio becomes 4 : 5. What is Alan’s age now?", a:18, o:[15,18,21,24]},
-   {q:"The ratio of girls to boys is 2 : 3. After 6 girls leave and 9 boys join, the ratio becomes 1 : 2. How many pupils were there at first?", a:60, o:[48,60,72,90]},
-   {q:"The ratio of red to blue beads is 5 : 3. After 16 red beads are added, the ratio becomes 7 : 3. How many blue beads are there?", a:24, o:[18,24,30,36]},
-   {q:"The ratio of Peter’s money to Sam’s money is 5 : 8. After Peter spends $45, Sam has twice as much money as Peter. How much money did Sam have at first?", a:360, o:[120,360,200,240]}
+   {q:"You are writing to your principal to request permission to hold a charity event. The tone should be:", a:"formal and respectful", o:["casual and funny","formal and respectful","angry","careless"]},
+   {q:"When writing an email to a friend about your holiday, the tone should be:", a:"friendly and informal", o:["formal","friendly and informal","strict","serious"]},
+   {q:"In a complaint letter, you should include:", a:"clear details of the problem", o:["insults","jokes","clear details of the problem","short unrelated story"]},
+   {q:"When ending a formal letter, you should write:", a:"Yours sincerely", o:["Bye","See you","Yours sincerely","Cheers"]},
+   {q:"In continuous writing, a good conclusion should:", a:"wrap up the story clearly", o:["introduce new characters","stop suddenly","wrap up the story clearly","repeat the introduction"]}
   ]
+
 ];
+
 
 // ------------------------ GAME LOGIC ------------------------
 let levelIndex=0, questionIndex=0, score=0, water=5, seconds=0, lives=2;
