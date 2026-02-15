@@ -119,53 +119,52 @@ body{overflow:hidden;transition:background 1s;}
 // ================= GAME DATA =================
 const levels = [
 
-  // LEVEL 1 – Subject-Verb Agreement & Tenses
+  // LEVEL 1 – Basic Fractions & Percentage
   [
-   {q:"Each of the players ______ given a certificate after the match.", a:"was", o:["were","was","are","have"]},
-   {q:"The number of students in the hall ______ increasing every year.", a:"is", o:["are","were","is","be"]},
-   {q:"She ______ her homework before she went out to play.", a:"had completed", o:["has completed","had completed","completed","completes"]},
-   {q:"Neither John nor his friends ______ aware of the mistake.", a:"were", o:["was","were","is","be"]},
-   {q:"By the time we arrived, the movie ______.", a:"had started", o:["has started","had started","was starting","starts"]}
+   {q:"3/5 of 80 = ?", a:48, o:[40,48,50,60]},
+   {q:"25% of 240 = ?", a:60, o:[40,50,60,80]},
+   {q:"A number is increased by 20%. If the original number is 150, what is the new number?", a:180, o:[160,170,180,190]},
+   {q:"What is 7/8 written as a decimal?", a:0.875, o:[0.785,0.875,0.807,0.978]},
+   {q:"If 6 pencils cost $3.60, how much does 1 pencil cost?", a:0.6, o:[0.5,0.6,0.7,0.8]}
   ],
 
-  // LEVEL 2 – Prepositions & Phrasal Verbs
+  // LEVEL 2 – Ratio & Fraction of Remainder
   [
-   {q:"The cat jumped ______ the table when it heard the noise.", a:"onto", o:["into","onto","over","between"]},
-   {q:"She takes pride ______ her work.", a:"in", o:["on","in","at","with"]},
-   {q:"The teacher told us to hand ______ our assignments by Friday.", a:"in", o:["out","over","in","up"]},
-   {q:"He ran ______ an old friend at the supermarket.", a:"into", o:["across","over","into","through"]},
-   {q:"We should not look ______ on others who need help.", a:"down", o:["up","down","into","for"]}
+   {q:"The ratio of boys to girls is 3 : 5. If there are 24 boys, how many girls are there?", a:40, o:[32,36,40,48]},
+   {q:"Ali spent 2/7 of his money and had $35 left. How much did he have at first?", a:49, o:[42,49,56,63]},
+   {q:"The ratio of red beads to blue beads is 4 : 9. There are 45 more blue beads than red beads. How many red beads are there?", a:36, o:[27,36,45,54]},
+   {q:"After giving away 3/8 of her stickers, Mary had 25 left. How many stickers did she have at first?", a:40, o:[32,36,40,48]},
+   {q:"The ratio of Tom’s money to Jim’s money is 5 : 6. If Tom has $150, how much do they have altogether?", a:330, o:[300,330,360,390]}
   ],
 
-  // LEVEL 3 – Vocabulary in Context (Common PSLE Themes)
+  // LEVEL 3 – Geometry (Area, Perimeter, Angles)
   [
-   {q:"The little boy was ______ when he realised he had lost his wallet.", a:"distressed", o:["distressed","delighted","relaxed","carefree"]},
-   {q:"The firefighter remained ______ despite the dangerous situation.", a:"calm", o:["calm","careless","furious","selfish"]},
-   {q:"Her ______ effort paid off when she won the competition.", a:"persistent", o:["lazy","persistent","careless","weak"]},
-   {q:"The teacher gave a ______ glance at the noisy pupils.", a:"stern", o:["gentle","stern","joyful","sleepy"]},
-   {q:"He was ______ enough to admit his mistake.", a:"brave", o:["brave","stubborn","greedy","jealous"]}
+   {q:"A rectangle is 15 cm long and 9 cm wide. What is its area?", a:135, o:[108,120,135,150]},
+   {q:"The perimeter of a square is 48 cm. What is its area?", a:144, o:[121,144,169,196]},
+   {q:"One interior angle of a regular pentagon is?", a:108, o:[90,108,120,135]},
+   {q:"A triangle has angles 35°, 65° and ______.", a:80, o:[70,75,80,85]},
+   {q:"The area of a rectangle is 120 cm². If its length is 15 cm, what is its width?", a:8, o:[6,7,8,10]}
   ],
 
-  // LEVEL 4 – Word Forms (Noun / Verb / Adjective / Adverb)
+  // LEVEL 4 – Speed, Average & Volume
   [
-   {q:"She spoke ______ during the presentation.", a:"confidently", o:["confidence","confident","confidently","confidented"]},
-   {q:"His ______ to help others earned him praise.", a:"willingness", o:["willing","willingly","willingness","will"]},
-   {q:"The magician performed the trick with great ______.", a:"skill", o:["skilled","skill","skilful","skillfuly"]},
-   {q:"The students listened ______ to the instructions.", a:"attentively", o:["attention","attentive","attentively","attentiveness"]},
-   {q:"Her explanation was clear and ______.", a:"precise", o:["precision","precisely","precise","preciseness"]}
+   {q:"A car travels 180 km in 3 hours. What is its speed?", a:60, o:[50,55,60,65]},
+   {q:"A train travels at 80 km/h for 2.5 hours. What distance does it cover?", a:200, o:[160,180,200,220]},
+   {q:"The average of 6 numbers is 18. What is the total of the numbers?", a:108, o:[96,102,108,120]},
+   {q:"A rectangular tank measures 5 m by 3 m by 2 m. What is its volume?", a:30, o:[20,25,30,40]},
+   {q:"A boy walked 4 km at 5 km/h. How long did he take?", a:0.8, o:[0.6,0.8,1,1.2]}
   ],
 
-  // LEVEL 5 – Editing Style (Common PSLE Error Types)
+  // LEVEL 5 – Higher Order Thinking (2–3 Steps)
   [
-   {q:"Everyone have brought their own lunch.", a:"has", o:["have","has","were","are"]},
-   {q:"She prefers swimming than cycling.", a:"to", o:["than","to","with","over"]},
-   {q:"The books on the shelf belongs to me.", a:"belong", o:["belongs","belong","belonged","belonging"]},
-   {q:"He was too tired that he could not continue.", a:"so", o:["so","too","very","such"]},
-   {q:"Despite of the heavy rain, the match continued.", a:"Despite", o:["Despite","Although","Because","Even"]}
+   {q:"The ratio of A to B is 2 : 3. After A gives B 10 marbles, the ratio becomes 1 : 2. How many marbles did A have at first?", a:40, o:[30,40,50,60]},
+   {q:"A number is decreased by 15% to become 170. What was the original number?", a:200, o:[180,190,200,210]},
+   {q:"The ratio of boys to girls is 4 : 5. After 6 boys leave, the ratio becomes 2 : 3. How many pupils were there at first?", a:90, o:[72,90,108,120]},
+   {q:"A shop increases the price of a bag by 20% and then gives a 20% discount. If the original price was $100, what is the final price?", a:96, o:[90,96,100,104]},
+   {q:"Peter spent 3/5 of his money. After receiving $40, he had $100. How much did he have at first?", a:150, o:[120,140,150,160]}
   ]
 
 ];
-
 
 
 // ------------------------ GAME LOGIC ------------------------
